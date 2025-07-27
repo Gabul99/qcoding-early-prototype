@@ -1,0 +1,17 @@
+[project]
+name = "qcoding-prototype"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Gabul99",email = "hclee99@kaist.ac.kr"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi (>=0.116.1,<0.117.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
