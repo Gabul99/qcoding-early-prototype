@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from interactions.antagonistic import generate_antagonistic_reply
 import json
 
 app = FastAPI()
@@ -98,28 +99,76 @@ async def get_data_item(item_id: str):
             return item
     raise HTTPException(status_code=404, detail="Data item not found")
 
+from fastapi import FastAPI, HTTPException
+from datetime import datetime
+from pydantic import BaseModel
+
+from services.antagonistic import generate_antagonistic_reply  # ✨ 추가
+
+app = FastAPI()
+
+
+class ItemData(BaseModel):
+    title: str
+    type: str
+    content: str
+
+
+class InteractionRequest(BaseModel):
+    item_data: ItemData
+
+
+class InteractionResponse(BaseModel):
+    result: str
+    timestamp: str
+    interaction_type: str
+
+
 @app.post("/api/interactions/{interaction_type}")
 async def process_interaction(interaction_type: str, request: InteractionRequest):
-    """AI 인터랙션을 처리합니다."""
-    
-    # 실제로는 여기서 AI 모델을 호출하여 응답을 생성합니다
-    # 지금은 샘플 응답을 반환합니다
-    
-    sample_responses = {
-        "antagonistic": f"🤔 Really? This {request.item_data.type} data seems questionable. Have you considered the sampling bias? The methodology looks flawed...",
-        "living-papers": f"📄 Generated dynamic report for {request.item_data.title}:\n\n## Analysis Summary\n- Key insights: {request.item_data.content}\n- Recommendations: Further investigation needed\n- Next steps: Validate with additional data sources",
-        "living-codes": f"💻 Interactive code for {request.item_data.title}:\n\n```python\n# Generated code based on {request.item_data.type} data\ndef analyze_{request.item_data.type}_data(data):\n    # Interactive analysis logic\n    result = process_data(data)\n    return result\n```",
-        "infinite-generation": f"∞ Infinite generation started for {request.item_data.title}:\n\nGenerating variations of {request.item_data.type} data...\n- Variation 1: {request.item_data.content} (modified)\n- Variation 2: Alternative approach\n- Variation 3: Extended analysis\n..."
-    }
-    
-    if interaction_type not in sample_responses:
+    """
+    AI 인터랙션을 처리합니다.
+    """
+    if interaction_type == "antagonistic":
+        # 별도 모듈에서 OpenAI 호출
+        result_text = await generate_antagonistic_reply(request.item_data)
+
+    elif interaction_type == "living-papers":
+        result_text = (
+            f"📄 Generated dynamic report for {request.item_data.title}:\n\n"
+            f"## Analysis Summary\n- Key insights: {request.item_data.content}\n"
+            "- Recommendations: Further investigation needed\n"
+            "- Next steps: Validate with additional data sources"
+        )
+
+    elif interaction_type == "living-codes":
+        result_text = (
+            f"💻 Interactive code for {request.item_data.title}:\n\n```python\n"
+            f"# Generated code based on {request.item_data.type} data\n"
+            f"def analyze_{request.item_data.type}_data(data):\n"
+            f"    # Interactive analysis logic\n"
+            f"    result = process_data(data)\n"
+            f"    return result\n```"
+        )
+
+    elif interaction_type == "infinite-generation":
+        result_text = (
+            f"∞ Infinite generation started for {request.item_data.title}:\n\n"
+            f"Generating variations of {request.item_data.type} data...\n"
+            f"- Variation 1: {request.item_data.content} (modified)\n"
+            f"- Variation 2: Alternative approach\n"
+            f"- Variation 3: Extended analysis\n..."
+        )
+
+    else:
         raise HTTPException(status_code=400, detail="Invalid interaction type")
-    
+
     return InteractionResponse(
-        result=sample_responses[interaction_type],
+        result=result_text,
         timestamp=datetime.utcnow().isoformat(),
-        interaction_type=interaction_type
+        interaction_type=interaction_type,
     )
+
 
 @app.get("/api/interaction-types")
 async def get_interaction_types():
