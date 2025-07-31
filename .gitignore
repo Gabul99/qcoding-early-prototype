@@ -32,6 +32,7 @@ pnpm-debug.log*
 .env.*          # e.g. .env.local, .env.development
 *.key
 *.pem
+backend/.env
 
 ###############################################################################
 #  Node / Vite (frontend)                                                     #

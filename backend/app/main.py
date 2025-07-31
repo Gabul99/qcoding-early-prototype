@@ -103,7 +103,7 @@ from fastapi import FastAPI, HTTPException
 from datetime import datetime
 from pydantic import BaseModel
 
-from services.antagonistic import generate_antagonistic_reply  # ✨ 추가
+from interactions.antagonistic import generate_antagonistic_reply 
 
 app = FastAPI()
 

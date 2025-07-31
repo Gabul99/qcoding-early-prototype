@@ -6,6 +6,7 @@ from datetime import datetime
 import openai
 from dotenv import load_dotenv
 from prompts.antagonistic import antagonistic_system_prompt
+from prompts.sample_data_string import sample_data_string
 
 load_dotenv()  # .env 로부터 환경변수 주입
 
@@ -13,18 +14,13 @@ load_dotenv()  # .env 로부터 환경변수 주입
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-async def generate_antagonistic_reply(item_data) -> str:
+async def generate_antagonistic_reply() -> str:
     system_prompt = antagonistic_system_prompt
-    user_prompt = (
-        f"Here is some {item_data.type} data titled '{item_data.title}'. "
-        f"Content:\n{item_data.content}\n\n"
-        "Generate a short antagonistic critique pointing out at least one potential bias "
-        "or methodological flaw. Use an informal, slightly sarcastic tone and add one emoji."
-    )
+    user_prompt = sample_data_string
 
     try:
         response = await openai.ChatCompletion.acreate(
-            model="gpt-4o-mini",  # 사용 모델
+            model="o4-mini-2025-04-16",  # 사용 모델
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
