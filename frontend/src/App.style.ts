@@ -186,6 +186,7 @@ export const CodeText = styled.code`
 
 export const InteractionSection = styled.div`
   margin-bottom: 1.5rem;
+  flex-shrink: 0;
 `;
 
 export const InteractionTitle = styled.h3`
@@ -256,6 +257,7 @@ export const LoadingState = styled.div`
   background-color: #1e293b;
   border-radius: 0.5rem;
   border: 1px solid #475569;
+  flex-shrink: 0;
 `;
 
 export const LoadingContent = styled.div`
@@ -302,6 +304,13 @@ export const ErrorContent = styled.div`
 
 export const ErrorText = styled.p`
   color: #f87171;
+`;
+
+export const ResultArea = styled.div`
+  flex-grow: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
 `;
 
 export const ResultSection = styled.div`

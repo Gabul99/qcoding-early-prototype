@@ -5,6 +5,40 @@ import { sampleData } from "./sample";
 
 // theme별 색상 매핑 (App.style.ts에서 import)
 import { themeColors } from "./App.style";
+import AntagonisticResultPanel from "./interaction/AntagonisticResultPanel";
+
+const sampleResult = [
+  {
+    mode: "Criticize the RQ",
+    target: "RQ",
+    response:
+      "Your RQ assumes users consciously justify hate speech. How about exploring unconscious drivers or network influences? The current question feels narrow and teleological.",
+  },
+  {
+    mode: "Disagree with theme",
+    target: "Theme: Emotional justification",
+    response:
+      "Calling tweets ‘Emotional justification’ reduces complex identity performance to mere feelings. Isn’t this more about collective venting rituals or moral grandstanding rather than simple ‘justification’?",
+  },
+  {
+    mode: "Disagree with code",
+    target: "Code: ‘moron’ under incompetence",
+    response:
+      "Lumping ‘moron’ into competence-based denigration misses the condescending humor element. Doesn’t this code belong in an ‘undermining through ridicule’ category instead?",
+  },
+  {
+    mode: "Suggest new qualitative model",
+    target: "overall analysis",
+    response:
+      "Why not apply discursive psychology to reveal how hate speech functions in interaction sequences rather than thematic abstraction? This could unearth dynamic rhetorical strategies you’re overlooking.",
+  },
+  {
+    mode: "Personal shame",
+    target: "overall analysis",
+    response:
+      "Wow, four themes and zero nuance—did you use a random theme generator? This feels like a first-year undergrad attempt at coding qualitative data.",
+  },
+];
 
 function App() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -50,16 +84,18 @@ function App() {
   };
 
   const handleInteractionClick = async (interactionType: string) => {
-    if (selectedIndex === null) return;
     setLoading(true);
     setSelectedInteraction(interactionType);
-    // 샘플 응답
-    setTimeout(() => {
-      setInteractionResult(
-        `Result for [${interactionType}] on theme "${sampleData[selectedIndex].theme}":\n\n${sampleData[selectedIndex].rawTweet}\n\n${sampleData[selectedIndex].code}`
-      );
-      setLoading(false);
-    }, 600);
+    const response = await fetch(
+      `http://localhost:8000/api/interactions/${interactionType}`,
+      {
+        method: "POST",
+      }
+    );
+    const data = await response.json();
+    setInteractionResult(`${data.result}`);
+    // setInteractionResult(JSON.stringify(sampleResult));
+    setLoading(false);
   };
 
   return (
@@ -147,12 +183,21 @@ function App() {
 
             {/* Interaction Result */}
             {interactionResult && (
-              <S.ResultSection>
-                <S.ResultTitle>Interaction Result</S.ResultTitle>
-                <S.ResultContent>
-                  <S.ResultText>{interactionResult}</S.ResultText>
-                </S.ResultContent>
-              </S.ResultSection>
+              <S.ResultArea>
+                {selectedInteraction === "antagonistic" && (
+                  <AntagonisticResultPanel
+                    interactionResult={interactionResult}
+                  />
+                )}
+                {selectedInteraction !== "antagonistic" && (
+                  <S.ResultSection>
+                    <S.ResultTitle>Interaction Result</S.ResultTitle>
+                    <S.ResultContent>
+                      <S.ResultText>{interactionResult}</S.ResultText>
+                    </S.ResultContent>
+                  </S.ResultSection>
+                )}
+              </S.ResultArea>
             )}
           </S.Panel>
         </S.Grid>
