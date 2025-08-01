@@ -6,37 +6,42 @@ import { sampleData } from "./sample";
 // theme별 색상 매핑 (App.style.ts에서 import)
 import { themeColors } from "./App.style";
 import AntagonisticResultPanel from "./interaction/AntagonisticResultPanel";
+import LivingPapersResultPanel from "./interaction/LivingPapersResultPanel";
 
 const sampleResult = [
   {
-    mode: "Criticize the RQ",
+    author: "Gustavo Morales",
+    title:
+      "From deliberation to acclamation: how did Twitter’s algorithms foster polarized communities and undermine democracy in the 2020 US presidential election",
+    target: "theme",
+    sentiment_emoji: "😐",
+    response:
+      "Your themes focus on direct insults and violence, but our work examines algorithm-mediated mixed-reality practices. How do you link these personal hate-speech themes back to acclamation vs. deliberation or the co-retweet network structure that amplifies them?",
+  },
+  {
+    author: "Akshay Verma",
+    title: "How U.S. Presidential elections strengthen global hate networks",
     target: "RQ",
+    sentiment_emoji: "😕",
     response:
-      "Your RQ assumes users consciously justify hate speech. How about exploring unconscious drivers or network influences? The current question feels narrow and teleological.",
+      "Your analysis categorizes individual tweets but misses our network-of-networks view and Telegram’s binding role. How does your framing address cross-platform link dynamics or the clustering metrics (e.g. assortativity, clustering coefficient) we identified around election events?",
   },
   {
-    mode: "Disagree with theme",
-    target: "Theme: Emotional justification",
+    author: "Nina Gorenc",
+    title: "Hate speech or free speech: an ethical dilemma?",
+    target: "RQ",
+    sentiment_emoji: "😟",
     response:
-      "Calling tweets ‘Emotional justification’ reduces complex identity performance to mere feelings. Isn’t this more about collective venting rituals or moral grandstanding rather than simple ‘justification’?",
+      "You highlight insult patterns, but don’t address the tension between free expression and protecting human dignity. How would you justify legal limits on violent or dehumanizing metaphors in light of the EU’s hate-speech definitions and our survey’s finding of widespread under-recognition?",
   },
   {
-    mode: "Disagree with code",
-    target: "Code: ‘moron’ under incompetence",
+    author: "Lara Grimminger",
+    title:
+      "Hate Towards the Political Opponent: A Twitter Corpus Study of the 2020 US Elections on the Basis of Offensive Speech and Stance Detection",
+    target: "raw data",
+    sentiment_emoji: "😊",
     response:
-      "Lumping ‘moron’ into competence-based denigration misses the condescending humor element. Doesn’t this code belong in an ‘undermining through ridicule’ category instead?",
-  },
-  {
-    mode: "Suggest new qualitative model",
-    target: "overall analysis",
-    response:
-      "Why not apply discursive psychology to reveal how hate speech functions in interaction sequences rather than thematic abstraction? This could unearth dynamic rhetorical strategies you’re overlooking.",
-  },
-  {
-    mode: "Personal shame",
-    target: "overall analysis",
-    response:
-      "Wow, four themes and zero nuance—did you use a random theme generator? This feels like a first-year undergrad attempt at coding qualitative data.",
+      "Great identification of insult themes—but did you map these onto our stance labels (Favor, Against, Neither, Mixed, Neutral)? For instance, how do your ‘moron’ or ‘wipe’ examples correlate with ‘Against’ vs. ‘Mixed’ stance in our corpus?",
   },
 ];
 
@@ -182,21 +187,27 @@ function App() {
                 )} */}
 
             {/* Interaction Result */}
-            {interactionResult && (
+            {!loading && interactionResult && (
               <S.ResultArea>
                 {selectedInteraction === "antagonistic" && (
                   <AntagonisticResultPanel
                     interactionResult={interactionResult}
                   />
                 )}
-                {selectedInteraction !== "antagonistic" && (
-                  <S.ResultSection>
-                    <S.ResultTitle>Interaction Result</S.ResultTitle>
-                    <S.ResultContent>
-                      <S.ResultText>{interactionResult}</S.ResultText>
-                    </S.ResultContent>
-                  </S.ResultSection>
+                {selectedInteraction === "living-papers" && (
+                  <LivingPapersResultPanel
+                    interactionResult={interactionResult}
+                  />
                 )}
+                {selectedInteraction !== "antagonistic" &&
+                  selectedInteraction !== "living-papers" && (
+                    <S.ResultSection>
+                      <S.ResultTitle>Interaction Result</S.ResultTitle>
+                      <S.ResultContent>
+                        <S.ResultText>{interactionResult}</S.ResultText>
+                      </S.ResultContent>
+                    </S.ResultSection>
+                  )}
               </S.ResultArea>
             )}
           </S.Panel>

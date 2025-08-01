@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from interactions.antagonistic import generate_antagonistic_reply
+from interactions.livingpapers import generate_livingpapers_reply
 import json
 
 app = FastAPI()
@@ -63,12 +64,7 @@ async def process_interaction(interaction_type: str):
         result_text = await generate_antagonistic_reply()
 
     elif interaction_type == "living-papers":
-        result_text = (
-            f"📄 Generated dynamic report for:\n\n"
-            f"## Analysis Summary\n- Key insights:\n"
-            "- Recommendations: Further investigation needed\n"
-            "- Next steps: Validate with additional data sources"
-        )
+        result_text = await generate_livingpapers_reply()
 
     elif interaction_type == "living-codes":
         result_text = (
