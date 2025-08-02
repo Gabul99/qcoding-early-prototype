@@ -29,6 +29,10 @@ export const TopBar = styled.div`
 
     .control {
       cursor: pointer;
+
+      &.selected {
+        font-weight: 600;
+      }
     }
   }
 `;

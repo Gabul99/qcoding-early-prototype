@@ -89,6 +89,7 @@ function App() {
   const handleItemClick = (idx: number) => {
     setSelectedIndex(idx);
     setInteractionResult("");
+    setIdeas([]);
   };
 
   const handleInteractionClick = async (interactionType: string) => {

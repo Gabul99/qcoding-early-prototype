@@ -37,10 +37,16 @@ const InfiniteResultPanel = ({
           </>
         )}
         <div className="control-panel">
-          <div className="control" onClick={onStart}>
+          <div
+            className={"control" + (streaming ? " selected" : "")}
+            onClick={onStart}
+          >
             Start
           </div>
-          <div className="control" onClick={onStop}>
+          <div
+            className={"control" + (streaming ? "" : " selected")}
+            onClick={onStop}
+          >
             Stop
           </div>
         </div>
