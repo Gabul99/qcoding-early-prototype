@@ -1,12 +1,14 @@
 # main.py
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, WebSocket, APIRouter, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from interactions.antagonistic import generate_antagonistic_reply
 from interactions.livingpapers import generate_livingpapers_reply
+from interactions.infinite import generate_infinite_batches
 import json
+import asyncio
 
 app = FastAPI()
 
@@ -127,9 +129,34 @@ async def get_interaction_types():
         ]
     }
 
-# 기존 Google Sheets 훅 (유지)
-@app.post("/sheet-hook")
-async def sheet_hook(req: Request):
-    payload = await req.json()
-    print("📌  Sheet event:", payload, "| received at", datetime.utcnow().isoformat())
-    return {"status": "ok"}
+router_ws = APIRouter(prefix="/ws/interactions")
+
+@router_ws.websocket("/infinite-generation")
+async def ws_interaction(ws: WebSocket):
+    await ws.accept()
+
+    task = None
+    try:
+        while True:
+            msg = await ws.receive_json()
+            cmd = msg.get("cmd")
+
+            if cmd == "start":
+                sel  = msg["selection"]          # {raw, code, theme}
+                ws.state.running = True
+                task = asyncio.create_task(
+                    generate_infinite_batches(ws, sel)
+                )
+
+            elif cmd in ("pause", "resume") and task:
+                task.get_coro().cr_frame.f_locals["running"] = (cmd == "resume")
+
+            elif cmd == "stop" and task:
+                task.cancel()
+                task = None
+
+    except WebSocketDisconnect:
+        if task:
+            task.cancel()
+
+app.include_router(router_ws)

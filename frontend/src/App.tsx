@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Palette } from "lucide-react";
 import * as S from "./App.style";
 import { sampleData } from "./sample";
-
-// theme별 색상 매핑 (App.style.ts에서 import)
 import { themeColors } from "./App.style";
 import AntagonisticResultPanel from "./interaction/AntagonisticResultPanel";
 import LivingPapersResultPanel from "./interaction/LivingPapersResultPanel";
+import type { InfiniteItem } from "./types/InfiniteItem";
+import InfiniteResultPanel from "./interaction/InfiniteResultPanel";
 
 const sampleResult = [
   {
@@ -52,6 +52,10 @@ function App() {
   );
   const [interactionResult, setInteractionResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [wsConnected, setWsConnected] = useState(false);
+  const [ideas, setIdeas] = useState<InfiniteItem[]>([]);
+  const [streaming, setStreaming] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
   // const [error, setError] = useState<string>("");
 
   // 인터랙션 버튼 데이터
@@ -84,23 +88,84 @@ function App() {
 
   const handleItemClick = (idx: number) => {
     setSelectedIndex(idx);
-    setSelectedInteraction(null);
     setInteractionResult("");
   };
 
   const handleInteractionClick = async (interactionType: string) => {
     setLoading(true);
     setSelectedInteraction(interactionType);
-    const response = await fetch(
-      `http://localhost:8000/api/interactions/${interactionType}`,
-      {
-        method: "POST",
-      }
-    );
-    const data = await response.json();
-    setInteractionResult(`${data.result}`);
-    // setInteractionResult(JSON.stringify(sampleResult));
+
+    if (interactionType === "infinite-generation") {
+      setWsConnected(false);
+    } else {
+      const response = await fetch(
+        `http://localhost:8000/api/interactions/${interactionType}`,
+        {
+          method: "POST",
+        }
+      );
+      const data = await response.json();
+      setInteractionResult(`${data.result}`);
+      // setInteractionResult(JSON.stringify(sampleResult));
+    }
+
     setLoading(false);
+  };
+
+  const openWebSockerForInfiniteGeneration = () => {
+    /** 1-a. 이미 열려 있던 소켓 닫기 */
+    if (wsRef.current) {
+      wsRef.current.close();
+    }
+
+    /** 1-b. 새 소켓 연결 */
+    const socket = new WebSocket(
+      "ws://localhost:8000/ws/interactions/infinite-generation"
+    );
+    wsRef.current = socket;
+
+    socket.onopen = () => {
+      setWsConnected(true); // 상태표시용
+      setStreaming(true);
+      console.log("connected");
+      if (selectedIndex === null) return;
+
+      // 선택된 데이터로 start 메시지 전송
+      const sel = sampleData[selectedIndex];
+      socket.send(
+        JSON.stringify({
+          cmd: "start",
+          selection: {
+            raw: sel.rawTweet,
+            code: sel.code,
+            theme: sel.theme,
+          },
+        })
+      );
+    };
+
+    // ⚠️ 다음 단계에서 onmessage·pause/resume 처리 예정
+    socket.onmessage = (e) => {
+      console.log("WS message:", e.data);
+      const obj = JSON.parse(e.data);
+      setIdeas((prev) => [...prev, obj]);
+    };
+    socket.onclose = () => setWsConnected(false);
+    socket.onerror = () => setWsConnected(false);
+
+    return; // fetch 로직 건너뜀
+  };
+
+  const stopInfiniteGeneration = () => {
+    if (!wsRef.current) return;
+
+    // 서버에 “stop” 알림
+    wsRef.current.send(JSON.stringify({ cmd: "stop" }));
+    setTimeout(() => wsRef.current?.close(), 200);
+
+    // UI 상태 리셋
+    setStreaming(false);
+    setWsConnected(false);
   };
 
   return (
@@ -199,16 +264,26 @@ function App() {
                     interactionResult={interactionResult}
                   />
                 )}
-                {selectedInteraction !== "antagonistic" &&
-                  selectedInteraction !== "living-papers" && (
-                    <S.ResultSection>
-                      <S.ResultTitle>Interaction Result</S.ResultTitle>
-                      <S.ResultContent>
-                        <S.ResultText>{interactionResult}</S.ResultText>
-                      </S.ResultContent>
-                    </S.ResultSection>
-                  )}
+                {selectedInteraction === "living-codes" && (
+                  <S.ResultSection>
+                    <S.ResultTitle>Interaction Result</S.ResultTitle>
+                    <S.ResultContent>
+                      <S.ResultText>{interactionResult}</S.ResultText>
+                    </S.ResultContent>
+                  </S.ResultSection>
+                )}
               </S.ResultArea>
+            )}
+            {selectedInteraction === "infinite-generation" && (
+              <InfiniteResultPanel
+                selectedItem={
+                  selectedIndex === null ? null : sampleData[selectedIndex]
+                }
+                ideas={ideas}
+                onStart={() => openWebSockerForInfiniteGeneration()}
+                onStop={() => stopInfiniteGeneration()}
+                streaming={streaming}
+              />
             )}
           </S.Panel>
         </S.Grid>
