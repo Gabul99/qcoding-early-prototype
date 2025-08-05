@@ -1,4 +1,11 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+const modeColors: Record<string, string> = {
+  Introduction: "#64748b", // slate-500
+  Agreement: "#22c55e", // green-500
+  Disagreement: "#ef4444", // red-500
+  Neutral: "#facc15", // yellow-400
+};
 
 export const Container = styled.div`
   background-color: #1e293b;
@@ -79,6 +86,21 @@ export const Bubble = styled.div<{ side: "left" | "right" }>`
     margin: 0;
     line-height: 1.2;
   }
+`;
+
+export const ModeBadge = styled.span<{ mode: string }>`
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+
+  ${({ mode }) =>
+    css`
+      background-color: ${modeColors[mode] || "#64748b"};
+    `}
 `;
 
 export const Raw = styled.span`

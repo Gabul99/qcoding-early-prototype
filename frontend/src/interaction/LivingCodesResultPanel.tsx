@@ -96,6 +96,9 @@ const LivingCodesResultPanel = () => {
           const side = isLeft ? "left" : "right";
           return (
             <S.Bubble key={idx} side={side}>
+              <S.ModeBadge mode={line.conversation_mode}>
+                {line.conversation_mode}
+              </S.ModeBadge>
               <strong>{line.speaking_code}</strong>
               <p>{line.utterance}</p>
               {/* hover 시 raw 보기 */}
