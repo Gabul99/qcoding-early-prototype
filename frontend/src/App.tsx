@@ -7,6 +7,7 @@ import AntagonisticResultPanel from "./interaction/AntagonisticResultPanel";
 import LivingPapersResultPanel from "./interaction/LivingPapersResultPanel";
 import type { InfiniteItem } from "./types/InfiniteItem";
 import InfiniteResultPanel from "./interaction/InfiniteResultPanel";
+import LivingCodesResultPanel from "./interaction/LivingCodesResultPanel";
 
 const sampleResult = [
   {
@@ -88,7 +89,7 @@ function App() {
 
   const handleItemClick = (idx: number) => {
     setSelectedIndex(idx);
-    setInteractionResult("");
+    if (idx === 3) setInteractionResult("");
     setIdeas([]);
   };
 
@@ -96,7 +97,9 @@ function App() {
     setLoading(true);
     setSelectedInteraction(interactionType);
 
-    if (interactionType === "infinite-generation") {
+    if (interactionType === "living-codes") {
+      setInteractionResult("");
+    } else if (interactionType === "infinite-generation") {
       setWsConnected(false);
     } else {
       const response = await fetch(
@@ -265,14 +268,6 @@ function App() {
                     interactionResult={interactionResult}
                   />
                 )}
-                {selectedInteraction === "living-codes" && (
-                  <S.ResultSection>
-                    <S.ResultTitle>Interaction Result</S.ResultTitle>
-                    <S.ResultContent>
-                      <S.ResultText>{interactionResult}</S.ResultText>
-                    </S.ResultContent>
-                  </S.ResultSection>
-                )}
               </S.ResultArea>
             )}
             {selectedInteraction === "infinite-generation" && (
@@ -285,6 +280,9 @@ function App() {
                 onStop={() => stopInfiniteGeneration()}
                 streaming={streaming}
               />
+            )}
+            {selectedInteraction === "living-codes" && (
+              <LivingCodesResultPanel />
             )}
           </S.Panel>
         </S.Grid>
