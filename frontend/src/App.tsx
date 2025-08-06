@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import * as S from "./App.style";
 import { sampleData } from "./sample";
 import { themeColors } from "./App.style";
