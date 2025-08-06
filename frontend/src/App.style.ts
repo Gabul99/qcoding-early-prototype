@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Database } from "lucide-react";
 
 // theme별 색상 팔레트 및 라벨
 export const themeColors: Record<
@@ -351,13 +350,6 @@ export const EmptyState = styled.div`
 
 export const EmptyContent = styled.div`
   text-align: center;
-`;
-
-export const EmptyIcon = styled(Database)`
-  width: 4rem;
-  height: 4rem;
-  margin: 0 auto 1rem;
-  opacity: 0.5;
 `;
 
 export const EmptyText = styled.p`

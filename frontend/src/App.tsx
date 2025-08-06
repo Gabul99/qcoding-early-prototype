@@ -68,6 +68,7 @@ function App() {
       setInteractionResult("");
     } else if (interactionType === "infinite-generation") {
       setWsConnected(false);
+      console.log(wsConnected);
     } else {
       const response = await fetch(
         `${API_ENDPOINT}/api/interactions/${interactionType}`,
