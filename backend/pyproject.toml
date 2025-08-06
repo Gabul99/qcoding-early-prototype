@@ -5,11 +5,12 @@ description = "Social Media Data Analysis AI Interaction Prototype"
 authors = [
     {name = "Gabul99",email = "hclee99@kaist.ac.kr"}
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi (>=0.116.1,<0.117.0)",
     "uvicorn[standard] (>=0.27.0,<0.28.0)",
-    "pydantic (>=2.0.0,<3.0.0)"
+    "pydantic (>=2.0.0,<3.0.0)",
+    "openai"
 ]
 
 [build-system]

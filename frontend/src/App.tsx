@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import { Palette } from "lucide-react";
 import * as S from "./App.style";
 import { sampleData } from "./sample";
 import { themeColors } from "./App.style";
@@ -9,42 +8,10 @@ import type { InfiniteItem } from "./types/InfiniteItem";
 import InfiniteResultPanel from "./interaction/InfiniteResultPanel";
 import LivingCodesResultPanel from "./interaction/LivingCodesResultPanel";
 
-const sampleResult = [
-  {
-    author: "Gustavo Morales",
-    title:
-      "From deliberation to acclamation: how did Twitter’s algorithms foster polarized communities and undermine democracy in the 2020 US presidential election",
-    target: "theme",
-    sentiment_emoji: "😐",
-    response:
-      "Your themes focus on direct insults and violence, but our work examines algorithm-mediated mixed-reality practices. How do you link these personal hate-speech themes back to acclamation vs. deliberation or the co-retweet network structure that amplifies them?",
-  },
-  {
-    author: "Akshay Verma",
-    title: "How U.S. Presidential elections strengthen global hate networks",
-    target: "RQ",
-    sentiment_emoji: "😕",
-    response:
-      "Your analysis categorizes individual tweets but misses our network-of-networks view and Telegram’s binding role. How does your framing address cross-platform link dynamics or the clustering metrics (e.g. assortativity, clustering coefficient) we identified around election events?",
-  },
-  {
-    author: "Nina Gorenc",
-    title: "Hate speech or free speech: an ethical dilemma?",
-    target: "RQ",
-    sentiment_emoji: "😟",
-    response:
-      "You highlight insult patterns, but don’t address the tension between free expression and protecting human dignity. How would you justify legal limits on violent or dehumanizing metaphors in light of the EU’s hate-speech definitions and our survey’s finding of widespread under-recognition?",
-  },
-  {
-    author: "Lara Grimminger",
-    title:
-      "Hate Towards the Political Opponent: A Twitter Corpus Study of the 2020 US Elections on the Basis of Offensive Speech and Stance Detection",
-    target: "raw data",
-    sentiment_emoji: "😊",
-    response:
-      "Great identification of insult themes—but did you map these onto our stance labels (Favor, Against, Neither, Mixed, Neutral)? For instance, how do your ‘moron’ or ‘wipe’ examples correlate with ‘Against’ vs. ‘Mixed’ stance in our corpus?",
-  },
-];
+const API_ENDPOINT = "https://image-538250612271.asia-northeast3.run.app";
+const WS_ENDPOINT = "wss://image-538250612271.asia-northeast3.run.app";
+// const API_ENDPOINT = "http://localhost:8000";
+// const WS_ENDPOINT = "ws://localhost:8000";
 
 function App() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -103,7 +70,7 @@ function App() {
       setWsConnected(false);
     } else {
       const response = await fetch(
-        `http://localhost:8000/api/interactions/${interactionType}`,
+        `${API_ENDPOINT}/api/interactions/${interactionType}`,
         {
           method: "POST",
         }
@@ -124,7 +91,7 @@ function App() {
 
     /** 1-b. 새 소켓 연결 */
     const socket = new WebSocket(
-      "ws://localhost:8000/ws/interactions/infinite-generation"
+      `${WS_ENDPOINT}/ws/interactions/infinite-generation`
     );
     wsRef.current = socket;
 
@@ -194,7 +161,6 @@ function App() {
                   onClick={() => handleItemClick(idx)}
                 >
                   <S.ItemHeader>
-                    <Palette size={20} />
                     <S.ItemType
                       style={{
                         color: themeColors[item.theme]?.color || "#fff",
