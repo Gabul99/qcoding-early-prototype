@@ -26,7 +26,7 @@ async def generate_infinite_batches(ws: WebSocket, sel: dict):
         stream = await client.chat.completions.create(
             model="gpt-4o-mini",
             stream=True,
-            temperature=0.9,
+            temperature=1.0,
             messages=build_messages(sel, list(ws.state.recent)),
         )
 
