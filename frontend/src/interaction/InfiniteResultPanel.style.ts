@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 export const Container = styled.div`
   background-color: #1e293b;
@@ -55,39 +55,70 @@ export const Spinner = styled.div`
   }
 `;
 
-export const ItemList = styled.div`
+export const ItemsZone = styled.div`
+  position: relative;
+  background: #1f1f2e;
   width: 100%;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  gap: 4px;
+  height: 320px;
 `;
 
-export const ItemContainer = styled.div`
-  width: 100%;
-  border-radius: 4px;
-  border: 1px solid #334155;
-  background-color: #0f172a;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
+const spin = keyframes`
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+`;
 
-  .head {
+export const Idea = styled.div<{ remaining: number }>`
+  position: absolute;
+  padding: 6px 10px;
+  max-width: 150px;
+  background: #2a2a3b;
+  color: #eee;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  pointer-events: all;
+  ${({ remaining }) => css`
+    border: 1px solid #4f5d78;
+    &:after {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      border: 2px solid transparent;
+      border-top-color: #8ab4f8;
+      border-radius: 6px;
+      animation: ${spin} ${remaining}ms linear forwards;
+    }
+  `}
+`;
+
+export const PinnedArea = styled.div`
+  margin-top: 16px;
+  background: rgba(30, 30, 40, 0.9);
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+export const PinnedItem = styled.div`
+  background: #3a3a4f;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #fff;
+  flex: 1 1 calc(33% - 16px);
+
+  .header {
     width: 100%;
     display: flex;
-    flex-direction: row;
-    font-size: 13px;
-    font-weight: 500;
-    color: #e2e8f0;
-    padding: 8px;
-  }
+    align-items: center;
 
-  .reason {
-    background-color: #334155;
-    padding: 8px;
-    font-size: 12px;
-    color: #cbd5e1;
-    border-radius: 0 0 4px 4px;
+    .icon {
+      margin-left: auto;
+      cursor: pointer;
+    }
   }
 `;
