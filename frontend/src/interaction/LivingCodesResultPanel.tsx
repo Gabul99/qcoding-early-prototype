@@ -142,6 +142,7 @@ const LivingCodesResultPanel = () => {
       </S.Decision>
 
       <S.Groups>
+        <h3>Current Groups</h3>
         {(() => {
           // 1) 그룹별로 묶기
           const buckets: Record<string, ComponentData[]> = {};

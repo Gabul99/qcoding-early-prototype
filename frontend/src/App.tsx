@@ -152,7 +152,7 @@ function App() {
         <S.Grid>
           {/* Left Panel - Data Items */}
           <S.Panel>
-            <S.PanelTitle>Data Items</S.PanelTitle>
+            <S.PanelTitle>Current Analysis</S.PanelTitle>
             <S.DataItemsContainer>
               {sampleData.map((item, idx) => (
                 <S.DataItemCard
@@ -162,6 +162,7 @@ function App() {
                   onClick={() => handleItemClick(idx)}
                 >
                   <S.ItemHeader>
+                    <S.ItemSubTitle>Theme</S.ItemSubTitle>
                     <S.ItemType
                       style={{
                         color: themeColors[item.theme]?.color || "#fff",
@@ -170,7 +171,11 @@ function App() {
                       {item.theme}
                     </S.ItemType>
                   </S.ItemHeader>
-                  <S.ItemTitle>{item.code}</S.ItemTitle>
+                  <S.ItemCodeHeader>
+                    <S.ItemSubTitle>Code</S.ItemSubTitle>
+                    <S.ItemTitle>{item.code}</S.ItemTitle>
+                  </S.ItemCodeHeader>
+
                   <S.ItemDescription>{item.rawTweet}</S.ItemDescription>
                 </S.DataItemCard>
               ))}

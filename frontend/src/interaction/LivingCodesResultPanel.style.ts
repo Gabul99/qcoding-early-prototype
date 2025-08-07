@@ -139,6 +139,12 @@ export const Groups = styled.div`
   gap: 1rem;
   margin-bottom: 1rem;
 
+  h3 {
+    margin: 0;
+    color: #e2e8f0;
+    font-size: 16px;
+  }
+
   h4 {
     margin: 0 0 0.5rem;
     color: #cbd5e1; /* slate-300 */

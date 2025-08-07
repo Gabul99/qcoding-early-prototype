@@ -138,7 +138,7 @@ export const DataItemCard = styled.div<{
 export const ItemHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 4px;
   margin-bottom: 0.5rem;
 `;
 
@@ -150,10 +150,25 @@ export const ItemType = styled.span`
   letter-spacing: 0.05em;
 `;
 
+export const ItemCodeHeader = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
 export const ItemTitle = styled.h3`
   font-weight: 600;
   color: #f1f5f9;
-  margin-bottom: 0.25rem;
+  margin: 0;
+`;
+
+export const ItemSubTitle = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  color: #e2e8f0;
 `;
 
 export const ItemDescription = styled.p`
